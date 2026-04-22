@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visor de Imágenes 360</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.7/build/pannellum.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.7/build/pannellum.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #111827;
+      color: #f9fafb;
+    }
+    header {
+      padding: 16px 20px;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+    header p {
+      margin: 0;
+      color: #d1d5db;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      padding: 16px 20px;
+      background: #0f172a;
+      border-bottom: 1px solid #1f2937;
+    }
+    .controls label {
+      font-weight: bold;
+    }
+    .controls input[type="file"],
+    .controls input[type="url"],
+    .controls button {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      font-size: 14px;
+    }
+    .controls input[type="url"] {
+      min-width: 320px;
+      width: 100%;
+      max-width: 520px;
+    }
+    .controls button {
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    .controls button:hover {
+      background: #1d4ed8;
+    }
+    #panorama {
+      width: 100%;
+      height: calc(100vh - 170px);
+      min-height: 500px;
+    }
+    .note {
+      padding: 12px 20px;
+      color: #cbd5e1;
+      background: #111827;
+      font-size: 14px;
+    }
+    code {
+      background: #1f2937;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Visor de Imágenes 360</h1>
+    <p>Abre panoramas equirectangulares 360° desde una URL o desde tu computador.</p>
+  </header>
+
+  <section class="controls">
+    <label for="imageUrl">URL de imagen 360:</label>
+    <input
+      id="imageUrl"
+      type="url"
+      value="https://pannellum.org/images/alma.jpg"
+      placeholder="https://tusitio.com/imagen-360.jpg"
+    />
+    <button id="loadUrlBtn" type="button">Cargar desde URL</button>
+
+    <label for="fileInput">o subir archivo:</label>
+    <input id="fileInput" type="file" accept="image/*" />
+  </section>
+
+  <div class="note">
+    📌 La imagen debe ser panorámica en formato <code>equirectangular</code>. Si cargas una URL externa, el servidor debe permitir <code>CORS</code>.
+  </div>
+
+  <div id="panorama"></div>
+
+  <script>
+    let viewer;
+
+    function initViewer(imageSource) {
+      if (viewer) {
+        viewer.destroy();
+      }
+
+      viewer = pannellum.viewer('panorama', {
+        type: 'equirectangular',
+        panorama: imageSource,
+        autoLoad: true,
+        showControls: true,
+        showZoomCtrl: true,
+        mouseZoom: true,
+        draggable: true,
+        pitch: 0,
+        yaw: 0,
+        hfov: 100
+      });
+    }
+
+    document.getElementById('loadUrlBtn').addEventListener('click', () => {
+      const url = document.getElementById('imageUrl').value.trim();
+      if (!url) {
+        alert('Ingresa una URL válida de una imagen 360.');
+        return;
+      }
+      initViewer(url);
+    });
+
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        initViewer(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    initViewer('https://pannellum.org/images/alma.jpg');
+  </script>
+</body>
+</html>
