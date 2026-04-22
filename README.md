@@ -1,6 +1,6 @@
 # 🌐 Visor 360 Web
 
-Aplicación web para visualizar imágenes panorámicas 360° (equirectangulares) directamente en el navegador.
+Aplicación web para visualizar imágenes panorámicas 360° (equirectangulares)
 
 ## 🚀 Demo en vivo
 
